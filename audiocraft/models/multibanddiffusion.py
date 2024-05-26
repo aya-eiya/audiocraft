@@ -65,7 +65,8 @@ class MultiBandDiffusion:
     def get_mbd_musicgen(device=None):
         """Load our diffusion models trained for MusicGen."""
         if device is None:
-            device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
+            
         path = 'facebook/multiband-diffusion'
         filename = 'mbd_musicgen_32khz.th'
         name = 'facebook/musicgen-small'
@@ -89,7 +90,7 @@ class MultiBandDiffusion:
             n_q (int, optional): Number of quantizers to use within the compression model.
         """
         if device is None:
-            device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
         assert bw in [1.5, 3.0, 6.0], f"bandwidth {bw} not available"
         if n_q is not None:
             assert n_q in [2, 4, 8]

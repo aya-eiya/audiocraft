@@ -97,7 +97,8 @@ class StandardSolver(ABC, flashy.BaseSolver):
     @property
     def autocast(self):
         """Convenient autocast (or not) using the solver configuration."""
-        return TorchAutocast(enabled=self.cfg.autocast, device_type=self.device, dtype=self.autocast_dtype)
+        device = self.device if self.device == "cuda" else "cpu"
+        return TorchAutocast(enabled=self.cfg.autocast, device_type=device, dtype=self.autocast_dtype)
 
     def _get_state_source(self, name) -> flashy.state.StateDictSource:
         # Internal utility to get a state source from the solver

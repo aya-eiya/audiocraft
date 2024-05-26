@@ -65,10 +65,8 @@ class MusicGen(BaseGenModel):
           # see: https://huggingface.co/facebook/musicgen-large
         """
         if device is None:
-            if torch.cuda.device_count():
-                device = 'cuda'
-            else:
-                device = 'cpu'
+            device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
+            # device = 'cuda' if torch.cuda.is_available() else 'cpu' if torch.backends.mps.is_available() else 'cpu'
 
         if name == 'debug':
             # used only for unit tests

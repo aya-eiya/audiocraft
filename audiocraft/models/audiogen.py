@@ -43,14 +43,16 @@ class AudioGen(BaseGenModel):
           # see: https://huggingface.co/facebook/audiogen-medium
         """
         if device is None:
-            if torch.cuda.device_count():
+            if torch.cuda.is_available():
                 device = 'cuda'
+            elif torch.backends.mps.is_available():
+                device = 'cpu'
             else:
                 device = 'cpu'
 
         if name == 'debug':
             # used only for unit tests
-            compression_model = get_debug_compression_model(device, sample_rate=16000)
+            compression_model = get_debug_compression_model(device="cpu", sample_rate=16000)
             lm = get_debug_lm_model(device)
             return AudioGen(name, compression_model, lm, max_duration=10)
 

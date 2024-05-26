@@ -11,7 +11,7 @@ import warnings
 import torch
 from torch import nn
 from torch.nn import functional as F
-from torch.nn.utils import spectral_norm, weight_norm
+from torch.nn.utils.parametrizations import spectral_norm, weight_norm
 
 
 CONV_NORMALIZATIONS = frozenset(['none', 'weight_norm', 'spectral_norm',
@@ -104,8 +104,8 @@ class NormConv1d(nn.Module):
     def __init__(self, *args, causal: bool = False, norm: str = 'none',
                  norm_kwargs: tp.Dict[str, tp.Any] = {}, **kwargs):
         super().__init__()
-        self.conv = apply_parametrization_norm(nn.Conv1d(*args, **kwargs), norm)
-        self.norm = get_norm_module(self.conv, causal, norm, **norm_kwargs)
+        self.conv = apply_parametrization_norm(nn.Conv1d(*args, **kwargs, device='cpu'), norm)
+        self.norm = get_norm_module(self.conv, causal, norm, **norm_kwargs, device='cpu')
         self.norm_type = norm
 
     def forward(self, x):
@@ -120,8 +120,8 @@ class NormConv2d(nn.Module):
     """
     def __init__(self, *args, norm: str = 'none', norm_kwargs: tp.Dict[str, tp.Any] = {}, **kwargs):
         super().__init__()
-        self.conv = apply_parametrization_norm(nn.Conv2d(*args, **kwargs), norm)
-        self.norm = get_norm_module(self.conv, causal=False, norm=norm, **norm_kwargs)
+        self.conv = apply_parametrization_norm(nn.Conv2d(*args, **kwargs, device='cpu'), norm)
+        self.norm = get_norm_module(self.conv, causal=False, norm=norm, **norm_kwargs, device='cpu')
         self.norm_type = norm
 
     def forward(self, x):

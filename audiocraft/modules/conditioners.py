@@ -396,7 +396,7 @@ class T5Conditioner(TextConditioner):
         self.name = name
         self.finetune = finetune
         self.word_dropout = word_dropout
-        if autocast_dtype is None or self.device == 'cpu':
+        if autocast_dtype is None or self.device in ('cpu', 'mps'):
             self.autocast = TorchAutocast(enabled=False)
             if self.device != 'cpu':
                 logger.warning("T5 has no autocast, this might lead to NaN")
@@ -535,7 +535,8 @@ class ChromaStemConditioner(WaveformConditioner):
                  device: tp.Union[torch.device, str] = 'cpu', **kwargs):
         from demucs import pretrained
         super().__init__(dim=n_chroma, output_dim=output_dim, device=device)
-        self.autocast = TorchAutocast(enabled=device != 'cpu', device_type=self.device, dtype=torch.float32)
+        device = self.device if self.device == "cuda" else "cpu"
+        self.autocast = TorchAutocast(enabled=device == 'cuda', device_type=device, dtype=torch.float32)
         self.sample_rate = sample_rate
         self.match_len_on_eval = match_len_on_eval
         if match_len_on_eval:
@@ -718,7 +719,7 @@ class JointEmbeddingConditioner(BaseConditioner):
         super().__init__(dim=dim, output_dim=output_dim)
         self.device = device
         self.attribute = attribute
-        if autocast_dtype is None or device == 'cpu':
+        if autocast_dtype is None or device in ('cpu', 'mps'):
             self.autocast = TorchAutocast(enabled=False)
             logger.warning("JointEmbeddingConditioner has no autocast, this might lead to NaN.")
         else:

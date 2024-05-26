@@ -43,8 +43,10 @@ class MAGNeT(BaseGenModel):
           # see: https://huggingface.co/facebook/audio-magnet-medium
         """
         if device is None:
-            if torch.cuda.device_count():
+            if torch.cuda.is_available():
                 device = 'cuda'
+            elif torch.backends.mps.is_available():
+                device = 'mps' # 'mps'
             else:
                 device = 'cpu'
 

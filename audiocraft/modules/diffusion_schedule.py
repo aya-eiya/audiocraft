@@ -125,7 +125,7 @@ class NoiseSchedule:
         noise_scale (float): Scaling factor for the noise
     """
     def __init__(self, beta_t0: float = 1e-4, beta_t1: float = 0.02, num_steps: int = 1000, variance: str = 'beta',
-                 clip: float = 5., rescale: float = 1., device='cuda', beta_exp: float = 1,
+                 clip: float = 5., rescale: float = 1., device='auto', beta_exp: float = 1,
                  repartition: str = "power", alpha_sigmoid: dict = {}, n_bands: tp.Optional[int] = None,
                  sample_processor: SampleProcessor = SampleProcessor(), noise_scale: float = 1.0, **kwargs):
 
