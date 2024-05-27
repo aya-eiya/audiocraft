@@ -396,10 +396,9 @@ class T5Conditioner(TextConditioner):
         self.name = name
         self.finetune = finetune
         self.word_dropout = word_dropout
-        if autocast_dtype is None or self.device in ('cpu', 'mps'):
+        if autocast_dtype is None or self.device in ('cpu', 'mps'): # autocast is not supported on mps too
             self.autocast = TorchAutocast(enabled=False)
-            if self.device != 'cpu':
-                logger.warning("T5 has no autocast, this might lead to NaN")
+            logger.warning("T5 has no autocast, this might lead to NaN")
         else:
             dtype = getattr(torch, autocast_dtype)
             assert isinstance(dtype, torch.dtype)
@@ -719,7 +718,7 @@ class JointEmbeddingConditioner(BaseConditioner):
         super().__init__(dim=dim, output_dim=output_dim)
         self.device = device
         self.attribute = attribute
-        if autocast_dtype is None or device in ('cpu', 'mps'):
+        if autocast_dtype is None or device in ('cpu', 'mps'): # autocast is not supported on mps too
             self.autocast = TorchAutocast(enabled=False)
             logger.warning("JointEmbeddingConditioner has no autocast, this might lead to NaN.")
         else:
